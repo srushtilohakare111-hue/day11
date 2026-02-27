@@ -29,7 +29,7 @@ data "aws_vpc" "default_vpc" {
   default = true
 }
 
-data "aws_subnets" "my_subnets_subnets" {
+data "aws_subnets" "my_subnets" {
     filter{
         name = "vpc_id"
         values = [data.aws_vpc.default_vpc.id]
@@ -49,11 +49,11 @@ resource "aws_eks_cluster" "my_cluster" {
   version  = "1.34"
 
   vpc_config {
-    subnet_ids = data.aws_subnets.default_subnets.ids
+    subnet_ids = data.aws_subnets.my_subnets.ids
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.cluster_policy_attachement,
   ]
 timeouts {
     create ="20m"
@@ -63,7 +63,8 @@ timeouts {
 }
 
 resource "aws_iam_role" "node_role" {
-     assume_role_policy = jsonencode({
+  name = "node_role"
+  assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
@@ -78,7 +79,7 @@ resource "aws_iam_role" "node_role" {
   })
 
   tags = {
-    tag-key = "tag-value"
+    env = "var.env"
   }
 }
   
@@ -124,7 +125,7 @@ resource "aws_eks_node_group" "example" {
   depends_on = [
     aws_iam_policy_policy_attachment.node_policy_attachment,
     aws_iam_policy_attachment.cluster_node_policy_attachment,
-    aws_iam_policy_attachment.node_ec2_policy_attachment1
+    aws_iam_policy_attachment.node_ec2_policy_attachment1,
   ]
 
 timeouts {

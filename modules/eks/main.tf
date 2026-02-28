@@ -25,14 +25,14 @@ resource "aws_iam_policy_attachment" "cluster-policy-attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 
-data "aws_vpc" "default_vpc" {
+data "aws_vpc" "my_vpc" {
   default = true
 }
 
 data "aws_subnets" "my_subnets" {
     filter{
-        name = "vpc_id"
-        values = [data.aws_vpc.default_vpc.id]
+        name = "vpc-id"
+        values = [data.aws_vpc.my_vpc.id]
 
     }
   

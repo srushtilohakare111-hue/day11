@@ -51,7 +51,9 @@ resource "aws_eks_cluster" "my_cluster" {
   vpc_config {
     subnet_ids = data.aws_subnets.my_subnets.ids
   }
-
+ depends_on = [ 
+  aws_iam_policy_attachment.cluster-policy-attachment,
+   ]
   
 timeouts {
     create ="20m"
@@ -81,10 +83,6 @@ resource "aws_iam_role" "node_role" {
   }
 }
   
-resource "aws_iam_role_policy_attachment" "cluster_node_policy_attachment" {
-  role = aws_iam_role.node_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-}
 
 
 resource "aws_iam_policy_attachment" "node_policy_attachment" {
@@ -100,7 +98,7 @@ resource "aws_iam_policy_attachment" "cluster_node_policy_attachment" {
 resource "aws_iam_policy_attachment" "node_ec2_policy_attachment1" {
   name       = "node_ec2_policy_attachment1"
   roles     = [aws_iam_role.node_role.name]
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEc2ContainerRegistryReadOnly"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 
 
 }

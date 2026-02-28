@@ -1,5 +1,5 @@
-resource "aws_iam_role" "cluster_role" {
-  name = "cluster_role"
+resource "aws_iam_role" "my_cluster_role" {
+  name = "my_cluster_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -21,7 +21,7 @@ resource "aws_iam_role" "cluster_role" {
 
 resource "aws_iam_policy_attachment" "cluster-policy-attachment" {
   name       = "cluster-policy-attachment"
-  roles      = [aws_iam_role.cluster_role.name]
+  roles      = [aws_iam_role.my_cluster_role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 
@@ -45,7 +45,7 @@ resource "aws_eks_cluster" "my_cluster" {
     authentication_mode = "API"
   }
 
-  role_arn = aws_iam_role.cluster_role.arn
+  role_arn = aws_iam_role.my_cluster_role.arn
   version  = "1.34"
 
   vpc_config {
@@ -62,8 +62,8 @@ timeouts {
 
 }
 
-resource "aws_iam_role" "node_role" {
-  name = "node_role"
+resource "aws_iam_role" "my_node_role" {
+  name = "my_node_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -87,17 +87,17 @@ resource "aws_iam_role" "node_role" {
 
 resource "aws_iam_policy_attachment" "node_policy_attachment" {
   name       = "node_policy_attachment"
-  roles     = [aws_iam_role.node_role.name]
+  roles     = [aws_iam_role.my_node_role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 }
 resource "aws_iam_policy_attachment" "cluster_node_policy_attachment" {
   name       = "cluster_node_policy_attachment"
-  roles     = [aws_iam_role.node_role.name]
+  roles     = [aws_iam_role.my_node_role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 resource "aws_iam_policy_attachment" "node_ec2_policy_attachment1" {
   name       = "node_ec2_policy_attachment1"
-  roles     = [aws_iam_role.node_role.name]
+  roles     = [aws_iam_role.my_node_role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 
 
@@ -105,7 +105,7 @@ resource "aws_iam_policy_attachment" "node_ec2_policy_attachment1" {
 resource "aws_eks_node_group" "example" {
   cluster_name    = aws_eks_cluster.my_cluster.name
   node_group_name = "my_node_group"
-  node_role_arn   = aws_iam_role.node_role.arn
+  node_role_arn   = aws_iam_role.my_node_role.arn
   subnet_ids      = data.aws_subnets.my_subnets.ids
   instance_types = ["t3.small"]
 

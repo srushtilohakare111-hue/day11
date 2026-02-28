@@ -35,6 +35,10 @@ data "aws_subnets" "my_subnets" {
         values = [data.aws_vpc.my_vpc.id]
 
     }
+    filter {
+      name = "availability-zone"
+      values = ["us-east-1a", "us-east-1b"]
+    }
   
 }
 

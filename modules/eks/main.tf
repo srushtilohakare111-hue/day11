@@ -52,9 +52,7 @@ resource "aws_eks_cluster" "my_cluster" {
     subnet_ids = data.aws_subnets.my_subnets.ids
   }
 
-  depends_on = [
-    aws_iam_policy_attachment.cluster_policy_attachment,
-  ]
+  
 timeouts {
     create ="20m"
 }
